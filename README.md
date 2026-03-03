@@ -1,18 +1,14 @@
-<h1 align="center"> 项目名称（⚠️ Alpha内测版 / 🧪 Beta公测版） </h1>
+<h1 align="center"> 项目名称（⚠️ Alpha内测版） </h1>
 
 > [!CAUTION]
 > ⚠️ Alpha内测版本警告：此为早期内部构建版本，尚不完整且可能存在错误，欢迎大家提Issue反馈问题或建议。
 
-或者
-
-> [!WARNING]
-> 🧪 Beta公测版本提示：教程主体已完成，正在优化细节，欢迎大家提Issue反馈问题或建议。
-
-*这里写项目的各类介绍信息、背景、动机等内容*
+一个面向数学/物理推导的低幻觉智能体骨架：  
+核心思想是**让 LLM 只负责“决策与编排”**，把代数运算、微分方程求解、化简、验算等交给 OpenClaw 工具执行并返回可追溯结果。
 
 ## 项目受众
 
-*注：这里写你的项目所面向的受众，本项目能给他们带来什么，对他们的基础能力要求有哪些*
+物理学、数学等科学领域的研究人员，需要借助LLM进行辅助符号运算来解决科研问题。
 
 ## 在线阅读
 https://datawhalechina.github.io/repo-template
@@ -22,7 +18,10 @@ https://datawhalechina.github.io/repo-template
 
 |  章节名   | 简介 | 状态 |
 |  ----  | ---- | ---- |
-| [第1章 xxx](https://github.com/datawhalechina/repo-template/blob/main/docs/chapter1)  | xxx | ✅ |
+| [第1章  Skill vs MCP]([https://github.com/flying-fish-2025/math-physics/docs/chapter1/README.md])  | - 集成 `Cadabra2`、`Mathematica`、`SymPy`、知识库检索四类能力
+- Stateful Session：对象级操作（定义符号、表达式、方程）可跨多轮复用
+- 透明过程：前端显示每一步工具调用参数和返回值
+- 证明兜底：支持将结论代回原方程进行验证 | ✅ |
 | [第2章 xxx](https://github.com/datawhalechina/repo-template/blob/main/docs/chapter2)  | xxx | ✅ |
 | [第3章 xxx](https://github.com/datawhalechina/repo-template/blob/main/docs/chapter3)  | xxx | ✅ |
 | 第4章  | xxx | 🚧 |
@@ -31,9 +30,9 @@ https://datawhalechina.github.io/repo-template
 
 | 姓名 | 职责 | 简介 |
 | :----| :---- | :---- |
-| 小明 | 项目负责人 | 一个理想主义者 |
-| 小红 | 第1章贡献者 | 小明的朋友 |
-| 小强 | 第2章贡献者 | 小明的朋友 |
+| 肖泽华 | 项目负责人 | 一个数学物理研究者 |
+| 陈可为 | 第1章贡献者1 | 机器学习在读研究生 |
+| 龙垭宇 | 第1章贡献者2 | 机器学习在读研究生 |
 
 *注：表头可自定义，但必须在名单中标明项目负责人*
 
