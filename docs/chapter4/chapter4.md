@@ -1,10 +1,9 @@
-# Math/Physics Proof Agent (MCP-first)
+# 高阶案例——数学与物理符号推理 Agent
+> [!CAUTION]
+> ⚠️ Alpha内测版本警告：此为早期内部构建版本，尚不完整且可能存在错误，欢迎大家提Issue反馈问题或建议。
 
-一个面向数学/物理推导的低幻觉智能体骨架：  
-核心思想是**让 LLM 只负责“决策与编排”**，把代数运算、微分方程求解、化简、验算等交给 MCP 工具执行并返回可追溯结果。
 
-完整环境配置请看：`docs/CONFIG_SETUP_CN.md`
-
+完整环境配置请看：`16agent-proj/docs/CONFIG_SETUP_CN.md`
 ## 目标能力
 
 - 集成 `Cadabra2`、`Mathematica`、`SymPy`、知识库检索四类能力
