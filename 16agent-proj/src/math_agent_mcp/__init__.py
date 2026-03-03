@@ -1,0 +1,2 @@
+"""Math Agent MCP package."""
+

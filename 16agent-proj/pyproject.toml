@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "math-agent-mcp"
+version = "0.1.0"
+description = "Stateful MCP server for verifiable math/physics derivations"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "sympy>=1.13",
+  "streamlit>=1.39",
+  "mcp>=1.2.0",
+  "openai>=1.61.0",
+  "python-dotenv>=1.0.1",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
