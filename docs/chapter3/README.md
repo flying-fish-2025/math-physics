@@ -1,119 +1,103 @@
-# Math/Physics Proof Agent (MCP-first)
+# 第三章 环境配置与基础上手
 
-一个面向数学/物理推导的低幻觉智能体骨架：  
-核心思想是**让 LLM 只负责“决策与编排”**，把代数运算、微分方程求解、化简、验算等交给 MCP 工具执行并返回可追溯结果。
+这一章的目标很明确：把 OpenClaw 在 Windows 本地环境里跑通，并完成飞书接入。
 
-完整环境配置请看：`docs/CONFIG_SETUP_CN.md`
+## 1. 建议先达到的最小目标
 
-## 目标能力
+第一次配置时，不要同时追求所有能力。更合理的目标是先完成这四件事：
 
-- 集成 `Cadabra2`、`Mathematica`、`SymPy`、知识库检索四类能力
-- Stateful Session：对象级操作（定义符号、表达式、方程）可跨多轮复用
-- 透明过程：前端显示每一步工具调用参数和返回值
-- 证明兜底：支持将结论代回原方程进行验证
+1. `openclaw` 命令可用
+2. `openclaw gateway run` 能正常启动
+3. Dashboard 能打开
+4. 飞书私聊或群聊里能收到回复
 
-## Skill vs MCP：推荐分工
+只要这四步通了，后面的 skills、hooks、web search 才有意义。
 
-- **MCP（必须）**：承载“可验证计算”，提供结构化工具接口（`define_symbol`、`dsolve_ode`、`simplify`、`verify` 等）
-- **Skill（强烈建议）**：约束流程与风格（禁止跳步、禁止心算、每一步必须引用工具返回值）
+## 2. Windows 本地部署建议
 
-一句话：**MCP 管正确性，Skill 管方法论。**
+### 2.1 安装完成后先确认命令是否可用
 
-## 目录结构
+如果安装后提示找不到 `openclaw`，高概率是 `Path` 没刷新或安装目录没进环境变量。
 
-- `src/math_agent_mcp/session_manager.py`：会话状态与对象仓库
-- `src/math_agent_mcp/tools/`：SymPy/Cadabra2/Mathematica/Knowledge 适配
-- `src/math_agent_mcp/mcp_server.py`：Stateful MCP Server（FastMCP）
-- `src/math_agent_mcp/mcp_tool_executor.py`：LLM 工具调用执行器（真实 tool-calling 循环）
-- `src/math_agent_mcp/webapp.py`：Streamlit 交互界面（含工具调用折叠显示）
+常见做法：
 
-## 快速开始
+- 重新打开 PowerShell
+- 检查安装目录是否在用户 `Path` 中
+- 使用 `where.exe openclaw` 确认命令实际位置
 
-1. 创建 Windows mamba 环境并安装依赖
+### 2.2 日常不要反复跑 `onboard`
+
+`openclaw onboard` 主要用于初始化和修改配置；平时真正运行应使用：
 
 ```bash
-mamba create -n math-agent-win python=3.11 pip -y
-micromamba run -n math-agent-win python -m pip install .
+openclaw gateway run
 ```
 
-2. 启动 MCP Server
+然后用下面两条命令检查：
 
 ```bash
-micromamba run -n math-agent-win python -m math_agent_mcp.mcp_server
+openclaw gateway probe
+openclaw dashboard
 ```
 
-3. 启动 Web UI（类似你截图的“调用工具 + 结果可见”）
+## 3. 飞书接入的关键点
+
+### 3.1 先把链路想清楚
+
+飞书接入不只是填 `App ID` 和 `App Secret`。真正跑通需要四部分都成立：
+
+- 飞书应用已创建
+- 应用权限 scope 足够
+- OpenClaw 中的飞书配置已写入
+- 私聊配对或群聊策略已经放通
+
+### 3.2 权限建议
+
+基础消息场景下，至少要关注这几类权限：
+
+- 即时消息相关权限
+- 联系人读取相关权限
+- 如果要操作云文档，再补充 doc/drive/wiki/bitable 相关权限
+
+其中联系人权限是最容易漏掉但又会直接导致 pairing 或后续身份识别失败的一类。
+
+### 3.3 pairing 的正确处理方式
+
+如果飞书私聊出现 pairing code，不要只在聊天里回复“yes”。更稳的做法是在本机命令行里确认：
 
 ```bash
-micromamba run -n math-agent-win streamlit run src/math_agent_mcp/webapp.py
+openclaw pairing list
+openclaw pairing approve <code>
 ```
 
-## 环境变量（可选）
+只有这里明确批准成功，私聊配对才算真正完成。
 
-- `CADABRA2_BIN`：Cadabra2 可执行文件路径（默认 `cadabra2`）
-- `CADABRA2_WSL_ENV`：Windows 回退到 WSL 时使用的 micromamba 环境名（默认 `cadabra`）
-- `MATHEMATICA_BIN`：Wolfram 可执行文件路径（默认 `wolframscript`）
-- `OPENAI_BASE_URL`：OpenAI 兼容端点（如 `https://hiapi.online/v1`）
-- `OPENAI_API_KEY`：API 密钥（建议放 `.env`）
-- `MODEL_PRIMARY`：默认模型（建议 `gemini-3-flash-no`）
-- `MODEL_FALLBACK`：回退模型（建议 `gemini-3-pro-no`）
+## 4. 模型配置建议
 
-## 混合架构（Windows + WSL）
+国内网络环境下，如果官方 OAuth 不稳定，更推荐用稳定的 OpenAI-compatible API。
 
-- Windows：MCP 主服务、Web UI、Mathematica、LLM API 调用
-- WSL：Cadabra2
-- Cadabra2 调用策略：
-  1) 先尝试本机 `cadabra2`
-  2) 失败且系统为 Windows 时，自动尝试 `wsl micromamba run -n cadabra cadabra2 -`
+建议优先满足这三点：
 
-## Gemini API 快速测试
+- `baseUrl` 正确
+- `apiKey` 有效
+- `model id` 已在 OpenClaw 中被设为默认模型
 
-1. 复制模板并填入 key
+如果只是改了 provider，但默认模型还是旧配置，那么实际运行时仍然会报错。
 
-```bash
-copy .env.example .env
-```
+## 5. 当前推荐的最小可用组合
 
-2. 运行 smoke test
+如果你的目标是“先稳定用起来”，当前更推荐这套组合：
 
-```bash
-micromamba run -n math-agent-win python scripts/gemini_smoke_test.py
-```
+- 渠道：飞书 WebSocket
+- 模型：OpenAI-compatible API
+- 运行：`openclaw gateway run`
+- 监测：`openclaw gateway probe`
+- 配对：`openclaw pairing approve <code>`
 
-## 在线网页端（真实工具调用）
+## 6. 推荐阅读
 
-```bash
-micromamba run -n math-agent-win streamlit run src/math_agent_mcp/webapp.py
-```
+这一章对应的详细长文教程位于仓库目录：
 
-能力：
-- 在线提问（数学/物理）
-- LLM 自动调用工具链（knowledge/sympy/cadabra/mathematica）
-- 自动验证 + 一键复验
-- `flash-no -> pro-no` 自动升级
+- `03环境配置与基础上手/01openclaw飞书安装.md`
 
-### 固定端口启动/停止（Windows）
-
-如果你经常 `Ctrl+C` 后端口递增，可用脚本先清理再启动：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/start_webapp.ps1 -Port 8501
-```
-
-停止：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/stop_webapp.ps1
-```
-
-## 使用建议
-
-- 对复杂物理推导：先用知识库工具检索定义和恒等式，再执行对象级符号操作
-- 对最终结论：总是触发 `verify_substitution` 二次验证
-- 把“证明文本”看作报告层，真正可信的是每一步 MCP 返回结果
-
-## 下一步（建议）
-
-- 对接真实向量数据库（Milvus/Qdrant）替换本地文本检索
-- 增加“工具白名单策略”：不同阶段只允许调用特定工具
-- 增加“Proof Graph”可视化（节点=表达式，边=工具变换）
+如果你需要完整截图、逐步操作和排错记录，建议直接打开仓库中的这篇长文；本章更像是压缩后的主线版。

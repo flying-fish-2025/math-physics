@@ -1,118 +1,93 @@
-# Skill vs MCP
-> [!CAUTION]
-> ⚠️ Alpha内测版本警告：此为早期内部构建版本，尚不完整且可能存在错误，欢迎大家提Issue反馈问题或建议。
+# 第一章 OpenClaw 概览
 
+OpenClaw 是一个面向个人开发者和小团队的 **自托管 AI 助手平台**。它的核心价值不是“又一个聊天框”，而是把多个消息渠道、模型 provider、工具调用能力和本地运行环境串成一个可以长期运行的 Agent 系统。
 
-完整环境配置请看：`16agent-proj/docs/CONFIG_SETUP_CN.md`
-## 目标能力
+## 1. OpenClaw 解决的是什么问题
 
-- 集成 `Cadabra2`、`Mathematica`、`SymPy`、知识库检索四类能力
-- Stateful Session：对象级操作（定义符号、表达式、方程）可跨多轮复用
-- 透明过程：前端显示每一步工具调用参数和返回值
-- 证明兜底：支持将结论代回原方程进行验证
+如果你只是想在网页上和模型对话，OpenClaw 并不是必须的。但如果你的目标是下面这些事情，OpenClaw 就有价值：
 
-## Skill vs MCP：推荐分工
+- 把 AI 助手接入飞书、Slack、Discord 等渠道
+- 让 AI 助手可以长期运行，而不是一次性问答
+- 让模型调用工具、访问本地工作区、执行工作流
+- 为不同任务配置不同 Agent、不同模型和不同权限边界
 
-- **MCP（必须）**：承载“可验证计算”，提供结构化工具接口（`define_symbol`、`dsolve_ode`、`simplify`、`verify` 等）
-- **Skill（强烈建议）**：约束流程与风格（禁止跳步、禁止心算、每一步必须引用工具返回值）
+换句话说，OpenClaw 更像一个 **Agent 运行平台**，而不只是聊天应用。
 
-一句话：**MCP 管正确性，Skill 管方法论。**
+## 2. 它和普通聊天工具的区别
 
-## 目录结构
+普通聊天工具的重点是“对话体验”，而 OpenClaw 的重点是“系统协同”。
 
-- `src/math_agent_mcp/session_manager.py`：会话状态与对象仓库
-- `src/math_agent_mcp/tools/`：SymPy/Cadabra2/Mathematica/Knowledge 适配
-- `src/math_agent_mcp/mcp_server.py`：Stateful MCP Server（FastMCP）
-- `src/math_agent_mcp/mcp_tool_executor.py`：LLM 工具调用执行器（真实 tool-calling 循环）
-- `src/math_agent_mcp/webapp.py`：Streamlit 交互界面（含工具调用折叠显示）
+在 OpenClaw 里，你通常需要同时考虑：
 
-## 快速开始
+- `Gateway` 是否正常运行
+- `Channel` 是否联通消息平台
+- `Model Provider` 是否有可用 API
+- `Agent` 是否有权限和上下文去完成任务
+- `Skill`、`Hook`、`Tool` 是否按预期工作
 
-1. 创建 Windows mamba 环境并安装依赖
+这意味着 OpenClaw 的门槛比普通聊天工具高一些，但换来的能力也更强。
 
-```bash
-mamba create -n math-agent-win python=3.11 pip -y
-micromamba run -n math-agent-win python -m pip install .
-```
+## 3. OpenClaw 的典型使用场景
 
-2. 启动 MCP Server
+### 3.1 消息渠道型助手
 
-```bash
-micromamba run -n math-agent-win python -m math_agent_mcp.mcp_server
-```
+最常见的入门场景，是把 OpenClaw 接到飞书或 Slack：
 
-3. 启动 Web UI（类似你截图的“调用工具 + 结果可见”）
+- 私聊机器人，做日常问答
+- 在群里 `@机器人` 处理任务
+- 给团队提供固定流程的自动化助手
 
-```bash
-micromamba run -n math-agent-win streamlit run src/math_agent_mcp/webapp.py
-```
+### 3.2 工作流型助手
 
-## 环境变量（可选）
+当你开始启用工具、hooks 和 skills 后，OpenClaw 会更像一个工作平台：
 
-- `CADABRA2_BIN`：Cadabra2 可执行文件路径（默认 `cadabra2`）
-- `CADABRA2_WSL_ENV`：Windows 回退到 WSL 时使用的 micromamba 环境名（默认 `cadabra`）
-- `MATHEMATICA_BIN`：Wolfram 可执行文件路径（默认 `wolframscript`）
-- `OPENAI_BASE_URL`：OpenAI 兼容端点（如 `https://hiapi.online/v1`）
-- `OPENAI_API_KEY`：API 密钥（建议放 `.env`）
-- `MODEL_PRIMARY`：默认模型（建议 `gemini-3-flash-no`）
-- `MODEL_FALLBACK`：回退模型（建议 `gemini-3-pro-no`）
+- 整理会话上下文
+- 自动触发固定动作
+- 根据命令调用外部工具或 API
+- 管理多个 Agent 的职责分工
 
-## 混合架构（Windows + WSL）
+### 3.3 垂直领域 Agent
 
-- Windows：MCP 主服务、Web UI、Mathematica、LLM API 调用
-- WSL：Cadabra2
-- Cadabra2 调用策略：
-  1) 先尝试本机 `cadabra2`
-  2) 失败且系统为 Windows 时，自动尝试 `wsl micromamba run -n cadabra cadabra2 -`
+如果你有明确业务场景，OpenClaw 可以作为外层交互和调度层。例如本教程第四章的数学与物理符号推理 Agent，本质上就是“OpenClaw 思路”的一个垂直案例：让模型负责决策，让外部工具负责严谨计算与验证。
 
-## Gemini API 快速测试
+## 4. 使用 OpenClaw 时必须知道的边界
 
-1. 复制模板并填入 key
+### 4.1 它不是零配置产品
 
-```bash
-copy .env.example .env
-```
+OpenClaw 不是装完就一定能跑通。实际使用中，常见问题包括：
 
-2. 运行 smoke test
+- 本地 `Path` 没配好，命令找不到
+- 网关没起来，Dashboard 打不开
+- 飞书权限不全，机器人收得到消息但无法完成后续动作
+- 模型 provider 配错，导致 401/403 或无响应
 
-```bash
-micromamba run -n math-agent-win python scripts/gemini_smoke_test.py
-```
+### 4.2 它有安全边界问题
 
-## 在线网页端（真实工具调用）
+只要允许 Agent 在本地运行、调用工具、访问文件系统，就必须考虑安全风险：
 
-```bash
-micromamba run -n math-agent-win streamlit run src/math_agent_mcp/webapp.py
-```
+- 网关监听地址是否暴露到公网
+- Token 是否泄露
+- 模型 API key 是否存储在安全位置
+- Skills 和 Hooks 是否引入不必要的执行权限
 
-能力：
-- 在线提问（数学/物理）
-- LLM 自动调用工具链（knowledge/sympy/cadabra/mathematica）
-- 自动验证 + 一键复验
-- `flash-no -> pro-no` 自动升级
+因此，初学阶段建议先使用：
 
-### 固定端口启动/停止（Windows）
+- `gateway.bind = loopback`
+- `gateway auth = token`
+- 最小权限的飞书应用
+- 按需开启 skills 和 hooks
 
-如果你经常 `Ctrl+C` 后端口递增，可用脚本先清理再启动：
+### 4.3 它更适合“会折腾”的使用者
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/start_webapp.ps1 -Port 8501
-```
+OpenClaw 对新手并不友好，尤其是在 Windows、本地代理、国内网络环境、飞书权限等问题叠加时更明显。如果你的目标只是“尽快有个机器人能聊天”，直接用托管平台会更省事；如果你的目标是“可控、可扩展、可自定义”，OpenClaw 才值得投入。
 
-停止：
+## 5. 建议的学习路径
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/stop_webapp.ps1
-```
+阅读本教程时，建议按这个顺序来：
 
-## 使用建议
+1. 先理解 OpenClaw 的系统组成和工作流
+2. 再完成最小可用配置：网关、模型、飞书
+3. 跑通基础消息收发后，再考虑 skills、hooks、web search
+4. 最后再看高阶案例，学习如何把 OpenClaw 思路迁移到具体业务系统里
 
-- 对复杂物理推导：先用知识库工具检索定义和恒等式，再执行对象级符号操作
-- 对最终结论：总是触发 `verify_substitution` 二次验证
-- 把“证明文本”看作报告层，真正可信的是每一步 MCP 返回结果
-
-## 下一步（建议）
-
-- 对接真实向量数据库（Milvus/Qdrant）替换本地文本检索
-- 增加“工具白名单策略”：不同阶段只允许调用特定工具
-- 增加“Proof Graph”可视化（节点=表达式，边=工具变换）
+下一章开始进入系统结构与配置思路。

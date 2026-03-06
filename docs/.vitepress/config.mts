@@ -1,25 +1,22 @@
 import { defineConfig } from 'vitepress'
-// https://vitepress.dev/reference/site-config
 
-// 1. 获取环境变量并判断
-// 如果环境变量 EDGEONE 等于 '1'，说明在 EdgeOne 环境，使用根路径 '/'
-// 否则默认是 GitHub Pages 环境，使用仓库子路径 '/easy-vecdb/'
 const isEdgeOne = process.env.EDGEONE === '1'
-const baseConfig = isEdgeOne ? '/' : '/repo-template/'
+const baseConfig = isEdgeOne ? '/' : '/ace-claw/'
 
 export default defineConfig({
   lang: 'zh-CN',
-  title: "Datawhale开源教程",
-  description: "AI前沿知识开源教程",
+  title: 'OpenClaw 教程',
+  description: 'OpenClaw 中文教程：本地部署、飞书接入、模型配置与高阶案例',
   base: baseConfig,
   markdown: {
     math: true
   },
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
     logo: '/datawhale-logo.png',
     nav: [
-      { text: 'PDF版本下载', link: 'https://github.com/datawhalechina/repo-template/releases' },
+      { text: '开始阅读', link: '/chapter1/chapter1' },
+      { text: '环境配置', link: '/chapter3/' },
+      { text: 'GitHub', link: 'https://github.com/datawhalechina/ace-claw' }
     ],
     search: {
       provider: 'local',
@@ -42,29 +39,47 @@ export default defineConfig({
     },
     sidebar: [
       {
+        text: '第一章 OpenClaw 概览',
         items: [
-          { text: '第1章：第1章的标题', link: '/chapter1/' },
-          { text: '第2章：第2章的标题', 
-            items: [
-              { text: '第2.1节：第2.1节的标题', link: '/chapter2/chapter2_1' },
-              { text: '第2.2节：第2.2节的标题', link: '/chapter2/chapter2_2' }
-            ]
-           }
+          { text: '1.1 OpenClaw 是什么', link: '/chapter1/chapter1' }
+        ]
+      },
+      {
+        text: '第二章 核心原理与系统架构',
+        items: [
+          { text: '2.1 系统组成与工作流', link: '/chapter2/chapter2_1' },
+          { text: '2.2 模型与渠道配置思路', link: '/chapter2/chapter2_2' }
+        ]
+      },
+      {
+        text: '第三章 环境配置与基础上手',
+        items: [
+          { text: '3.1 Windows 本地部署与飞书接入', link: '/chapter3/' }
+        ]
+      },
+      {
+        text: '第四章 高阶案例',
+        items: [
+          { text: '4.1 数学与物理符号推理 Agent', link: '/chapter4/chapter4' }
+        ]
+      },
+      {
+        text: '第五章 生态扩展',
+        items: [
+          { text: '5.1 后续扩展路线', link: '/chapter5/' }
         ]
       }
     ],
-
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/datawhalechina/repo-template' }
+      { icon: 'github', link: 'https://github.com/datawhalechina/ace-claw' }
     ],
-
     editLink: {
-      pattern: 'https://github.com/datawhalechina/repo-template/blob/main/docs/:path'
+      pattern: 'https://github.com/datawhalechina/ace-claw/blob/main/docs/:path'
     },
-
     footer: {
-      message: '<a href="https://beian.miit.gov.cn/" target="_blank">京ICP备2026002630号-1</a> | <a href="https://beian.mps.gov.cn/#/query/webSearch?code=11010602202215" rel="noreferrer" target="_blank">京公网安备11010602202215号</a>',
-      copyright: '本作品采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议（CC BY-NC-SA 4.0）</a> 进行许可'
+      message: '教程内容基于实际配置与排错过程整理，请结合 OpenClaw 官方文档交叉验证。',
+      copyright:
+        '文档默认采用 CC BY-NC-SA 4.0 协议共享。'
     }
   }
 })
