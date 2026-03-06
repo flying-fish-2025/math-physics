@@ -77,6 +77,29 @@ npm run docs:dev
 - 如果你有新的 OpenClaw 案例，建议补充最少三部分内容：目标问题、配置步骤、排错记录
 - 如果你准备提交 PR，优先保证内容能被读者直接复现，而不是只给结论
 
-## License
+## 贡献者名单
 
-本仓库文档默认采用 `CC BY-NC-SA 4.0` 协议共享，代码部分沿用各自目录下已有约定。
+| 姓名   | 职责           | 简介               |
+| ------ | -------------- | ------------------ |
+| 龙垭宇 | 第1、2章贡献者 | 机器学习在读研究生 |
+| 肖泽华 | 第3、4章贡献者 | 数学物理研究者     |
+| 陈可为 | 第5章贡献者    | 机器学习在读研究生 |
+
+## 参与贡献
+
+- 如果你发现了一些问题，可以提Issue进行反馈，如果提完没有人回复你可以联系[保姆团队](https://github.com/datawhalechina/DOPMC/blob/main/OP.md)的同学进行反馈跟进~
+- 如果你想参与贡献本项目，可以提Pull Request，如果提完没有人回复你可以联系[保姆团队](https://github.com/datawhalechina/DOPMC/blob/main/OP.md)的同学进行反馈跟进~
+- 如果你对 Datawhale 很感兴趣并想要发起一个新的项目，请按照[Datawhale开源项目指南](https://github.com/datawhalechina/DOPMC/blob/main/GUIDE.md)进行操作即可~
+
+## 关注我们
+
+扫描下方二维码关注公众号：Datawhale
+
+[![img](https://raw.githubusercontent.com/datawhalechina/pumpkin-book/master/res/qrcode.jpeg)](https://raw.githubusercontent.com/datawhalechina/pumpkin-book/master/res/qrcode.jpeg)
+
+## LICENSE
+
+[![知识共享许可协议](https://camo.githubusercontent.com/4e651249bcd5e4a919f8b85221435dc46c5f70de051ec49d4ebe0f61bfd7f72a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d434325323042592d2d4e432d2d5341253230342e302d6c6967687467726579)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
+本作品采用[知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议](http://creativecommons.org/licenses/by-nc-sa/4.0/)进行许可。
+
+
